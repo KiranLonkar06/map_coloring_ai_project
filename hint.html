@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hint & Strategy — Map Coloring</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* small page-level overrides so this page looks good even without edits to your style.css */
+    html, body {
+        overflow-x: hidden;
+    }
+
+    body { display:flex; align-items:flex-start; justify-content:center; padding:30px; background: linear-gradient(180deg,#416287,#f5f5f2); }
+    .hint-card {  max-width:900px; width:100%; background:#9BB4C0; border-radius:12px; padding:26px; box-shadow:0 10px 30px rgba(10,30,60,0.12); }
+    h1 { margin-top:0; color:#073b6e; }
+    .actions { display:flex; gap:12px; margin-top:18px; }
+    .actions button { padding:10px 18px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+    .back { background:#2e77f6; color:white; }
+    .demo { background:#fa7b04; color:white; }
+    .example { margin-top:18px; background:#CBCBCB; padding:12px; border-radius:8px; border:1px solid #e6f0ff; }
+    .strategy-list { margin-left:18px; }
+    .small-note { color:#556; font-size:14px; margin-top:8px; }
+    .snapshot { margin-top:18px; display:flex; gap:12px; align-items:center; }
+    .snapshot .box { width:120px; height:80px; border-radius:6px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; background:#fafafa; }
+  </style>
+</head>
+<body>
+
+  <div class="hint-card">
+    <h1>Game Strategy & Hints</h1>
+
+    <p>In this game you must color every region so that no two adjacent regions share the same color.
+    Below are recommended strategies and a short worked example to help you when you're stuck.</p>
+
+    <h3>Recommended general strategy</h3>
+    <ol class="strategy-list">
+      <li><strong>Start with high-degree regions:</strong> choose the region with the most neighbours (most constraints) and color it first.</li>
+      <li><strong>Use Minimum Remaining Values (MRV):</strong> prefer regions with fewer legal color choices left.</li>
+      <li><strong>Use forward-checking:</strong> after you color a region, remove that color from neighbour domains and check for dead-ends early.</li>
+      <li><strong>Backtrack when stuck:</strong> if a neighbour has no legal colors, undo the last choice and try another color.</li>
+      <li><strong>Prefer symmetry-breaking:</strong> choose one color as canonical for the first region to reduce equivalent solutions.</li>
+    </ol>
+
+    <div class="example">
+      <strong>Simple example (5-region map):</strong>
+      <div style="margin-top:8px;">
+        1. Color region <em>A</em> first (it has many neighbours).<br>
+        2. Color adjacent ones with different colors, checking each time. <br>
+        3. If you reach a conflict, backtrack to the last safe choice.
+      </div>
+    </div>
+
+    <h3 style="margin-top:18px;">Quick tips</h3>
+    <ul>
+      <li>Try to use the minimum number of distinct colors.</li>
+      <li>If there are many valid options, leave the harder regions for last.</li>
+      <li>Use the built-in <em>Solve</em> (AI) only if you want to learn from the solution.</li>
+    </ul>
+
+    <div class="small-note">Tip: You can come here anytime by pressing the <strong>Get Hint</strong> button — it won't change your game unless you click "Use Suggestion".</div>
+
+    <!-- optional small snapshot of current board read from localStorage -->
+    <div class="snapshot" id="snapshotArea" style="display:none;">
+      <div class="box" id="snapBox">Current board</div>
+      <div style="flex:1">
+        <div id="snapText">Loading your board...</div>
+        <div class="small-note">If nothing appears, return to the game and press any region to make sure it is saved.</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="back" id="backBtn">← Back to Game</button>
+      <button class="demo" id="demoBtn">View Demo / Auto-Solve</button>
+    </div>
+
+  </div>
+
+<script>
+  // Back to game
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = 'main.html';
+  });
+
+  // Demo button — you can either redirect to a demo page or run solver by query param
+  document.getElementById('demoBtn').addEventListener('click', () => {
+  // Enable auto-solve mode
+  localStorage.setItem("autoSolve", "true");
+
+  // Redirect back to main page
+  window.location.href = "main.html";
+});
+
+
+  // Optional: show snapshot of current board saved in localStorage
+  (function showSnapshot() {
+    try {
+      const raw = localStorage.getItem('mapState');
+      if (!raw) return;
+      const mapState = JSON.parse(raw);
+      const keys = Object.keys(mapState);
+      if (!keys.length) return;
+
+      const snapText = document.getElementById('snapText');
+      snapText.innerHTML = '<strong>Saved colors:</strong> ' + keys.map(k => k + ':' + mapState[k]).join(', ');
+      document.getElementById('snapshotArea').style.display = 'flex';
+    } catch(e) {
+      console.warn('Could not parse saved mapState', e);
+    }
+  })();
+</script>
+
+</body>
+</html>

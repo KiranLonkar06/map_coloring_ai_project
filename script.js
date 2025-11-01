@@ -126,6 +126,66 @@ function allColored() {
   return Object.keys(regionColors).length === totalRegions;
 }
 
+// these is for the hint button
+// Save current map state and redirect to hint.html
+document.getElementById("hintBtn").addEventListener("click", () => {
+  // Optional: persist current map colors so hint page can read them
+  try {
+    localStorage.setItem('mapState', JSON.stringify(regionColors || {}));
+  } catch (e) {
+    console.warn("Could not save mapState to localStorage", e);
+  }
+
+  // Redirect to hint/instruction page
+  window.location.href = "hint.html";
+});
+
+
+// these is for the view demo button
+function startAutoSolve() {
+  const steps = [
+    { id: "A", color: "red", text: "Step 1: Region A → Red (starting point)" },
+    { id: "B", color: "blue", text: "Step 2: Region B → Blue (touches A, so must be different)" },
+    { id: "C", color: "yellow", text: "Step 3: Region C → Yellow (touches A, safe)" },
+    { id: "D", color: "green", text: "Step 4: Region D → Green (avoiding conflicts with B & C)" },
+    { id: "E", color: "red", text: "Step 5: Region E → Red (valid color, no conflicts)" }
+  ];
+
+  const msg = document.getElementById("message");
+  let i = 0;
+
+  function paintNext() {
+    if (i >= steps.length) {
+      msg.innerText = "✅ Auto-solve completed!";
+      return;
+    }
+
+    const s = steps[i];
+    const region = document.getElementById(s.id);
+    region.style.transition = "fill 0.5s";
+    region.style.fill = s.color;
+
+    msg.innerText = s.text;
+    i++;
+
+    setTimeout(paintNext, 1000);  // wait 1 second before next move
+  }
+
+  msg.innerText = "🔍 Auto-solve started...";
+  setTimeout(paintNext, 800);
+ }
+ 
+// let demoRunning = false;
+
+// function startAutoSolve() {
+//   demoRunning = true;
+//   // rest of code...
+// }
+
+// // Inside region click listener:
+// if (demoRunning) return;
+
+
 // Check adjacency for conflicts; mark conflict regions with .conflict class
 function hasConflict() {
   let conflictFound = false;
