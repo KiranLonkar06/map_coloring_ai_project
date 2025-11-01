@@ -16,6 +16,42 @@ document.querySelectorAll(".color-btn").forEach(btn => {
     document.getElementById("currentColor").textContent = selectedColor;
   });
 });
+document.getElementById("hintBtn").addEventListener("click", giveHint);
+
+function giveHint() {
+    // Find an uncolored square
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            if (!colors[i][j]) { // uncolored cell
+                let validColor = findValidColor(i, j);
+                if (validColor) {
+                    colors[i][j] = validColor;
+                    drawGrid();
+                    return;
+                }
+            }
+        }
+    }
+
+    alert("No more hints available!");
+}
+
+// Check if a color is valid
+function findValidColor(r, c) {
+    let usedColors = new Set();
+
+    let neighbors = [
+        [r-1, c], [r+1, c], [r, c-1], [r, c+1],
+    ];
+
+    neighbors.forEach(([x, y]) => {
+        if (x >= 0 && y >= 0 && x < gridSize && y < gridSize && colors[x][y]) {
+            usedColors.add(colors[x][y]);
+        }
+    });
+
+    return colorOptions.find(col => !usedColors.has(col));
+}
 
 // attach click event to each region
 document.querySelectorAll("#map path").forEach(region => {
