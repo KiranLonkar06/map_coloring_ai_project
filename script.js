@@ -163,6 +163,8 @@ function startAutoSolve() {
     const s = steps[i];
     const region = document.getElementById(s.id);
     region.style.transition = "fill 0.5s";
+    regionColors[s.id] = s.color;
+
     region.style.fill = s.color;
 
     msg.innerText = s.text;
@@ -174,16 +176,50 @@ function startAutoSolve() {
   msg.innerText = "🔍 Auto-solve started...";
   setTimeout(paintNext, 800);
  }
- 
-// let demoRunning = false;
 
-// function startAutoSolve() {
-//   demoRunning = true;
-//   // rest of code...
-// }
+// ✅ Run auto-solve if flag exists
+  window.addEventListener("load", () => {
+    const auto = localStorage.getItem("autoSolve");
+    if (auto === "true") {
+      localStorage.removeItem("autoSolve"); // clear so it doesn't repeat forever
+      startAutoSolve();
+    }
+  });
 
-// // Inside region click listener:
-// if (demoRunning) return;
+function startAutoSolve() {
+  const steps = [
+    { id: "A", color: "red", text: "Step 1: Region A → Red (starting point)" },
+    { id: "B", color: "blue", text: "Step 2: Region B → Blue (touches A, so must be different)" },
+    { id: "C", color: "yellow", text: "Step 3: Region C → Yellow (touches A, safe)" },
+    { id: "D", color: "green", text: "Step 4: Region D → Green (avoiding conflicts with B & C)" },
+    { id: "E", color: "red", text: "Step 5: Region E → Red (valid color, no conflicts)" }
+  ];
+
+  const msg = document.getElementById("message");
+  let i = 0;
+
+  function paintNext() {
+    if (i >= steps.length) {
+      msg.innerText = "✅ Auto-solve completed!";
+      return;
+    }
+
+    const s = steps[i];
+    const region = document.getElementById(s.id);
+
+    region.style.transition = "fill 0.5s";
+    region.style.fill = s.color;
+    regionColors[s.id] = s.color;   // ✅ update internal state
+
+    msg.innerText = s.text;
+    i++;
+
+    setTimeout(paintNext, 1000);
+  }
+
+  msg.innerText = "🔍 Auto-solve started...";
+  setTimeout(paintNext, 800);
+}
 
 
 // Check adjacency for conflicts; mark conflict regions with .conflict class
@@ -210,3 +246,10 @@ function hasConflict() {
 
   return conflictFound;
 }
+window.addEventListener("load", () => {
+  const auto = localStorage.getItem("autoSolve");
+  if (auto === "true") {
+    localStorage.removeItem("autoSolve");
+    startAutoSolve();
+  }
+});

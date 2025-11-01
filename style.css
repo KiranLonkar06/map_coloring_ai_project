@@ -85,6 +85,12 @@ body {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+#message {
+  min-height: 40px;       /* ensures area never shrinks */
+  display: flex;
+  align-items: center;    /* keeps text vertically centered */
+  justify-content: center;
+}
 
 #resultImg {
   width: 350px;
