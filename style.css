@@ -1,27 +1,144 @@
+/* Full background */
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 20px;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-#colors {
-  margin-bottom: 10px;
-}
-
-.color-btn {
-  width: 40px;
-  height: 40px;
+#restartBtn {
+  /* margin-top: 10px;
+  padding: 5px 10px;
+  background: #4CAF50;
   border: none;
+  border:1px solid black;
+  border-radius: 8px;
+  font-size: 20px;
   cursor: pointer;
+  color: white;
+  transition: 0.3s; */
+  padding: 10px 18px;
+  background:  #cf4b73;
+  cursor: pointer;
+  border: none;
+  color: rgb(9, 4, 4);
+  border:1px solid black;
+  border-radius: 8px;
+  font-size: 20px;
+  margin-left: 5px;
+  transition: 0.3s;
+}
+
+#restartBtn:hover {
+  background:  #FF9587;
+  transform: scale(1.08);
+} 
+
+
+/*buttons on the right */
+.top-right-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  /* z-index: 999;  ensures above everything */
+}
+
+
+/* Game container card */
+.game-container {
+  background: #E2E2B6;
+  width: 600px;
+  margin-top: 7px;
+  padding: 20px;
+  height:550px;
+  border:2px solid black;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(148, 16, 16, 0.2);
+  text-align: center;
+  animation: fadeIn 0.9s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  color: #03346E;
+  margin-bottom: 0px;
+}
+
+/* Color buttons */
+.color-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 40%;
+  border: none;
   margin: 5px;
-  border-radius: 5px;
+  border:1px solid black;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.color-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Hint button */
+#hintBtn {
+  padding: 10px 18px;
+  background: #2f7f38;
+  cursor: pointer;
+  border: none;
+  color: rgb(9, 4, 4);
+  border:1px solid black;
+  border-radius: 8px;
+  font-size: 20px;
+  margin-left: 40px;
+  transition: 0.3s;
+}
+
+#hintBtn:hover {
+  background: #54b55f;
+  transform: scale(1.08);
+}
+
+/* SVG Map */
+#map {
+  margin-top: 0px;
+  height:280px;
 }
 
 #map path {
   cursor: pointer;
+  transition: 0.25s;
 }
 
+#map path:hover {
+  opacity: 0.7;
+}
+
+/* Conflict styling */
 .conflict {
   stroke: red;
   stroke-width: 3px;
+}
+
+/* Current Color and Message text */
+#currentColor {
+  font-weight: bold;
+  color: #00448f;
+}
+
+#message {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 0px;
 }

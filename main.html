@@ -7,31 +7,39 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<h2>Map Coloring Game (No two adjacent regions can have the same color!)</h2>
-
-<!-- Color palette -->
-<div id="colors">
-  <button class="color-btn" data-color="red" style="background:red;"></button>
-  <button class="color-btn" data-color="blue" style="background:blue;"></button>
-  <button class="color-btn" data-color="green" style="background:green;"></button>
-  <button class="color-btn" data-color="yellow" style="background:yellow;"></button>
+  
+   <div class="top-right-controls">
   <button id="hintBtn">Get Hint</button>
-
+  <button id="restartBtn">Restart</button>
 </div>
 
-<p>Selected Color: <span id="currentColor">None</span></p>
-<p id="message"></p>
+    <div class="game-container">
+      
+    <h2>Map Coloring Game</h2>
+    <p>No two touching regions can have same color!!!</p>
 
-<!-- Simple SVG Map (5 regions) -->
-<svg id="map" width="400" height="300">
-  <path id="A" d="M50 50 L150 50 L150 150 L50 150 Z" stroke="black" fill="#eee"></path>
-  <path id="B" d="M150 50 L250 50 L250 150 L150 150 Z" stroke="black" fill="#eee"></path>
-  <path id="C" d="M50 150 L150 150 L150 250 L50 250 Z" stroke="black" fill="#eee"></path>
-  <path id="D" d="M150 150 L250 150 L250 250 L150 250 Z" stroke="black" fill="#eee"></path>
-  <path id="E" d="M250 50 L350 150 L250 250 Z" stroke="black" fill="#eee"></path>
-</svg>
+    <!-- Color palette -->
+    <div id="colors">
+      <button class="color-btn" data-color="red" style="background:red;"></button>
+      <button class="color-btn" data-color="blue" style="background:blue;"></button>
+      <button class="color-btn" data-color="green" style="background:green;"></button>
+      <button class="color-btn" data-color="yellow" style="background:yellow;"></button>
+      
+    </div>
 
+    <p>Selected Color: <span id="currentColor">None</span></p>
+    <p id="message"></p>
+
+    <!-- Map -->
+    <svg id="map" width="400" height="300">
+      <path id="A" d="M50 50 L150 50 L150 150 L50 150 Z" stroke="black" fill="#eee"></path>
+      <path id="B" d="M150 50 L250 50 L250 150 L150 150 Z" stroke="black" fill="#eee"></path>
+      <path id="C" d="M50 150 L150 150 L150 250 L50 250 Z" stroke="black" fill="#eee"></path>
+      <path id="D" d="M150 150 L250 150 L250 250 L150 250 Z" stroke="black" fill="#eee"></path>
+      <path id="E" d="M250 50 L350 150 L250 250 Z" stroke="black" fill="#eee"></path>
+    </svg>
+</div>
+  </div>
 <script src="script.js"></script>
 </body>
 </html>

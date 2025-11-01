@@ -8,6 +8,22 @@ const adjacency = {
   D: ["B", "C", "E"],
   E: ["B", "D"]
 };
+// logic for restart button
+document.getElementById("restartBtn").addEventListener("click", restartGame);
+
+function restartGame() {
+  document.querySelectorAll("#map path").forEach(region => {
+    region.style.fill = "#eee";        // reset color
+    region.classList.remove("conflict"); 
+  });
+
+  selectedColor = null;
+  document.getElementById("currentColor").textContent = "None";
+  document.getElementById("message").textContent = "";
+
+  console.log("Game restarted");
+}
+
 
 // set selected color
 document.querySelectorAll(".color-btn").forEach(btn => {
