@@ -11,16 +11,7 @@ body {
 }
 
 #restartBtn {
-  /* margin-top: 10px;
-  padding: 5px 10px;
-  background: #4CAF50;
-  border: none;
-  border:1px solid black;
-  border-radius: 8px;
-  font-size: 20px;
-  cursor: pointer;
-  color: white;
-  transition: 0.3s; */
+ 
   padding: 10px 18px;
   background:  #cf4b73;
   cursor: pointer;
@@ -51,7 +42,7 @@ body {
 
 
 /* Game container card */
-.game-container {
+/* .game-container {
   background: #E2E2B6;
   width: 600px;
   margin-top: 7px;
@@ -62,7 +53,65 @@ body {
   box-shadow: 0 0 25px rgba(148, 16, 16, 0.2);
   text-align: center;
   animation: fadeIn 0.9s ease;
+} */
+.game-container {
+  background: #E2E2B6;
+  width: 90vw;
+  max-width: 520px;
+  padding: 20px;
+  min-height: 470px;
+
+  border: 2px solid black;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(148, 16, 16, 0.2);
+  text-align: center;
+  animation: fadeIn 0.9s ease;
 }
+
+/* these is for result animation */
+
+.map-wrapper {
+  transition: opacity 0.7s ease;
+}
+
+/* these is for animation of image */
+.map-wrapper {
+  transition: opacity 0.7s ease;
+}
+
+#resultImg {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+
+#resultImg {
+  width: 350px;
+  margin-top: 20px;
+  margin:auto;
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
+/* additional to map */
+#map {
+  width: 100%;
+  max-width: 460px;  /* keeps it inside container */
+  height: auto;
+  display: block;
+  margin: auto;
+}
+* {
+  box-sizing: border-box;
+}
+
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }

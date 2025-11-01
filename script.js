@@ -1,6 +1,10 @@
-let selectedColor = null;
+// script.js — full corrected version
 
-// Region adjacency list (CSP graph)
+let selectedColor = null;
+// Save chosen colors for each region
+let regionColors = {};
+
+// Adjacency graph
 const adjacency = {
   A: ["B", "C"],
   B: ["A", "D", "E"],
@@ -8,104 +12,141 @@ const adjacency = {
   D: ["B", "C", "E"],
   E: ["B", "D"]
 };
-// logic for restart button
-document.getElementById("restartBtn").addEventListener("click", restartGame);
 
-function restartGame() {
-  document.querySelectorAll("#map path").forEach(region => {
-    region.style.fill = "#eee";        // reset color
-    region.classList.remove("conflict"); 
-  });
-
-  selectedColor = null;
-  document.getElementById("currentColor").textContent = "None";
-  document.getElementById("message").textContent = "";
-
-  console.log("Game restarted");
-}
-
-
-// set selected color
+// Hook up color buttons
 document.querySelectorAll(".color-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     selectedColor = btn.dataset.color;
     document.getElementById("currentColor").textContent = selectedColor;
   });
 });
-document.getElementById("hintBtn").addEventListener("click", giveHint);
 
-function giveHint() {
-    // Find an uncolored square
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            if (!colors[i][j]) { // uncolored cell
-                let validColor = findValidColor(i, j);
-                if (validColor) {
-                    colors[i][j] = validColor;
-                    drawGrid();
-                    return;
-                }
-            }
-        }
-    }
-
-    alert("No more hints available!");
-}
-
-// Check if a color is valid
-function findValidColor(r, c) {
-    let usedColors = new Set();
-
-    let neighbors = [
-        [r-1, c], [r+1, c], [r, c-1], [r, c+1],
-    ];
-
-    neighbors.forEach(([x, y]) => {
-        if (x >= 0 && y >= 0 && x < gridSize && y < gridSize && colors[x][y]) {
-            usedColors.add(colors[x][y]);
-        }
-    });
-
-    return colorOptions.find(col => !usedColors.has(col));
-}
-
-// attach click event to each region
+// Apply color to region on click
 document.querySelectorAll("#map path").forEach(region => {
   region.addEventListener("click", () => {
     if (!selectedColor) return;
 
     region.style.fill = selectedColor;
-    checkConflicts();
+    regionColors[region.id] = selectedColor;
+
+    // Remove any previous conflict highlight for this region (re-check will add if still conflict)
+    region.classList.remove("conflict");
+
+    checkGameStatus();
   });
 });
 
-// validate no two adjacent share same color
-function checkConflicts() {
+// Restart button wiring (make sure your HTML has id="restartBtn")
+document.getElementById("restartBtn").addEventListener("click", restartGame);
+
+// Restart function: reset UI and internal state
+function restartGame() {
+  // Reset all regions to default color and remove conflict highlight
+  document.querySelectorAll("#map path").forEach(region => {
+    region.style.fill = "#eee";
+    region.classList.remove("conflict");
+  });
+
+  // Reset selected color text and internal state
+  regionColors = {};
+  selectedColor = null;
+  document.getElementById("currentColor").textContent = "None";
   document.getElementById("message").textContent = "";
 
+  // Hide result image and restore map visibility (in case it was hidden)
+  const resultImg = document.getElementById("resultImg");
+  if (resultImg) {
+    resultImg.style.display = "none";
+    resultImg.src = "";
+  }
+  const mapWrapper = document.querySelector(".map-wrapper");
+  if (mapWrapper) {
+    mapWrapper.style.display = "block";
+    // ensure opacity set back to 1 (in case it was faded)
+    mapWrapper.style.opacity = "1";
+  }
+}
+
+// showResult: fade out map and show the win/lose image
+function showResult(success) {
+  const map = document.querySelector(".map-wrapper");
+  const img = document.getElementById("resultImg");
+
+  // Defensive checks
+  if (!img) return;
+
+  // Fade out map (requires CSS transition on .map-wrapper)
+  if (map) {
+    map.style.opacity = "0";
+    // after fade completes, hide map and show image
+    setTimeout(() => {
+      map.style.display = "none";
+      img.src = success ? "images/win.png" : "images/lose.png";
+      img.style.display = "block";
+      // optional: animate the image (CSS keyframes or small JS transform)
+      img.style.transform = "scale(0.95)";
+      img.style.opacity = "0";
+      requestAnimationFrame(() => {
+        img.style.transition = "transform 400ms ease, opacity 400ms ease";
+        img.style.transform = "scale(1)";
+        img.style.opacity = "1";
+      });
+    }, 700); // match CSS transition duration for .map-wrapper (700ms)
+  } else {
+    // If no wrapper found, just show image
+    img.src = success ? "images/win.png" : "images/lose.png";
+    img.style.display = "block";
+  }
+}
+
+// Check if all regions are colored then evaluate result
+function checkGameStatus() {
+  // only proceed when all regions are filled
+  if (!allColored()) return;
+
+  // Clear previous conflict highlights
+  document.querySelectorAll("#map path").forEach(r => r.classList.remove("conflict"));
+
+  const conflict = hasConflict();
+
+  const messageEl = document.getElementById("message");
+  if (conflict) {
+    messageEl.textContent = "❌ Wrong coloring! Adjacent regions have same color.";
+    showResult(false);
+  } else {
+    messageEl.textContent = "✅ Perfect! All regions colored correctly.";
+    showResult(true);
+  }
+}
+
+// Check that every region has been assigned a color
+function allColored() {
+  // Count how many regions there are in the SVG
+  const totalRegions = document.querySelectorAll("#map path").length;
+  return Object.keys(regionColors).length === totalRegions;
+}
+
+// Check adjacency for conflicts; mark conflict regions with .conflict class
+function hasConflict() {
   let conflictFound = false;
 
   for (let region in adjacency) {
-    let regionColor = document.getElementById(region).style.fill;
+    const rColor = regionColors[region];
+    if (!rColor) continue; // skip uncolored regions
 
     adjacency[region].forEach(neighbor => {
-      let neighborColor = document.getElementById(neighbor).style.fill;
-
-      // reset borders
-      document.getElementById(region).classList.remove("conflict");
-      document.getElementById(neighbor).classList.remove("conflict");
-
-      if (regionColor && neighborColor && regionColor === neighborColor) {
+      const nColor = regionColors[neighbor];
+      if (!nColor) return;
+      if (rColor === nColor) {
         conflictFound = true;
-        document.getElementById(region).classList.add("conflict");
-        document.getElementById(neighbor).classList.add("conflict");
+        // add highlight for both regions (id must exist in DOM)
+        const rEl = document.getElementById(region);
+        const nEl = document.getElementById(neighbor);
+        if (rEl) rEl.classList.add("conflict");
+        if (nEl) nEl.classList.add("conflict");
       }
     });
   }
 
-  if (conflictFound) {
-    document.getElementById("message").textContent = "❌ Conflict! Two adjacent regions have same color.";
-  } else {
-    document.getElementById("message").textContent = "✅ No conflicts!";
-  }
+  return conflictFound;
 }
